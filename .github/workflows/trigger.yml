@@ -33,7 +33,7 @@ jobs:
               },
             })
             const installations = await appOctokit.rest.apps.listInstallations()
-            installations.forEach((installation, i) => {
+            installations.forEach(async (installation, i) => {
               const installationOctokit = new Octokit({
                 authStrategy: createAppAuth,
                 auth: {
@@ -43,7 +43,7 @@ jobs:
                 }
               })
               const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation();
-              repositories.forEach((repository, j) => {
+              repositories.forEach(async (repository, j) => {
                 await installationOctokit.rest.actions.createWorkflowDispatch({
                   owner: repository.owner.login,
                   repo: repository.name,
