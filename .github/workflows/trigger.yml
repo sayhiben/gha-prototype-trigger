@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v2
+      
       - name: Install node dependencies
         run: |
           npm install @octokit/rest
           npm install @octokit/auth-app
+
       - name: Trigger external workflows
         uses: actions/github-script@v5
         env:
@@ -25,6 +27,8 @@ jobs:
           script: |
             const { Octokit } = require("@octokit/rest");
             const { createAppAuth } = require("@octokit/auth-app")
+
+            // Authenticate as the Dispatching GitHub App
             const appOctokit = new Octokit({
               authStrategy: createAppAuth,
               auth: {
@@ -32,11 +36,15 @@ jobs:
                 privateKey: process.env.DISPATCHER_APP_PRIVATE_KEY,
               },
             })
+
+            // List all installations of the Dispatching GitHub App
             const installationsResponse = await appOctokit.rest.apps.listInstallations()
-            console.log(installationsResponse)
             const installations = installationsResponse.data
-            console.log(installations)
+            
+            // Iterate through each installation's repositories and dispatch the workflow
             installations.forEach(async (installation, i) => {
+
+              // Authenticate as the installation
               const installationOctokit = new Octokit({
                 authStrategy: createAppAuth,
                 auth: {
@@ -45,10 +53,12 @@ jobs:
                   installationId: installation.id
                 }
               })
+
+              // List all repositories under the installation
               const repositoriesResponse = await installationOctokit.rest.apps.listReposAccessibleToInstallation()
-              console.log(repositoriesResponse)
               const repositories = repositoriesResponse.data.repositories
-              console.log(repositories)
+              
+              // Create a workflow_dispatch event for each repository
               repositories.forEach(async (repository, j) => {
                 await installationOctokit.rest.actions.createWorkflowDispatch({
                   owner: repository.owner.login,
