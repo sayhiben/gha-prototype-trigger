@@ -47,7 +47,7 @@ jobs:
               })
               const repositoriesResponse = await installationOctokit.rest.apps.listReposAccessibleToInstallation()
               console.log(repositoriesResponse)
-              const repositories = repositoriesResponse.data
+              const repositories = repositoriesResponse.data.repositories
               console.log(repositories)
               repositories.forEach(async (repository, j) => {
                 await installationOctokit.rest.actions.createWorkflowDispatch({
