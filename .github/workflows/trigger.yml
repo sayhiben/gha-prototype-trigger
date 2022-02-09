@@ -18,8 +18,8 @@ jobs:
           DISPATCHER_CLIENT_SECRET: ${{ secrets.DISPATCHER_CLIENT_SECRET }}
         with:
           script: |
-            const { Octokit } = require("@octokit/rest");
-            const { createAppAuth } = require("@octokit/auth-app")
+            // const { Octokit } = require("@octokit/rest");
+            // const { createAppAuth } = require("@octokit/auth-app")
             const appOctokit = new Octokit({
               authStrategy: createAppAuth,
               auth: {
