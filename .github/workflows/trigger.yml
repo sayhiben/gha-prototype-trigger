@@ -32,7 +32,9 @@ jobs:
                 privateKey: process.env.DISPATCHER_APP_PRIVATE_KEY,
               },
             })
-            const installations = await appOctokit.rest.apps.listInstallations().data
+            const installationsResponse = await appOctokit.rest.apps.listInstallations()
+            console.log(installationsResponse)
+            const installations = installationsResponse.data
             console.log(installations)
             installations.forEach(async (installation, i) => {
               const installationOctokit = new Octokit({
@@ -43,8 +45,9 @@ jobs:
                   installationId: installation.id
                 }
               })
-              constole.log(installationOctokit)
-              const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation()
+              const repositoriesResponse = await installationOctokit.rest.apps.listReposAccessibleToInstallation()
+              console.log(repositoriesResponse)
+              const repositories = repositoriesResponse.data
               console.log(repositories)
               repositories.forEach(async (repository, j) => {
                 await installationOctokit.rest.actions.createWorkflowDispatch({
