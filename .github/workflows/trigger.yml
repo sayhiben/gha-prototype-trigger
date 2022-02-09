@@ -12,10 +12,10 @@ jobs:
       - name: Trigger external workflows
         uses: actions/github-script@v5
         env:
-          DISPATCHER_APP_ID=${{ secrets.DISPATCHER_APP_ID }}
-          DISPATCHER_APP_PRIVATE_KEY=${{ secrets.DISPATCHER_APP_PRIVATE_KEY }}
-          DISPATCHER_CLIENT_ID=${{ secrets.DISPATCHER_CLIENT_ID }}
-          DISPATCHER_CLIENT_SECRET=${{ secrets.DISPATCHER_CLIENT_SECRET }}
+          DISPATCHER_APP_ID: ${{ secrets.DISPATCHER_APP_ID }}
+          DISPATCHER_APP_PRIVATE_KEY: ${{ secrets.DISPATCHER_APP_PRIVATE_KEY }}
+          DISPATCHER_CLIENT_ID: ${{ secrets.DISPATCHER_CLIENT_ID }}
+          DISPATCHER_CLIENT_SECRET: ${{ secrets.DISPATCHER_CLIENT_SECRET }}
         with:
           script: |
             const { Octokit } = require("@octokit/rest");
