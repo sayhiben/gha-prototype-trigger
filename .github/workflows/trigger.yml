@@ -23,35 +23,37 @@ jobs:
           DISPATCHER_CLIENT_SECRET: ${{ secrets.DISPATCHER_CLIENT_SECRET }}
         with:
           script: |
-            const { Octokit } = require("@octokit/rest");
-            const { createAppAuth } = require("@octokit/auth-app")
-            const appOctokit = new Octokit({
-              authStrategy: createAppAuth,
-              auth: {
-                appId: process.env.DISPATCHER_APP_ID,
-                privateKey: process.env.DISPATCHER_APP_PRIVATE_KEY,
-              },
-            })
-            const installations = await appOctokit.rest.apps.listInstallations()
-            installations.forEach((installation, i) => {
-              const installationOctokit = new Octokit({
+            (async () => {
+              const { Octokit } = require("@octokit/rest");
+              const { createAppAuth } = require("@octokit/auth-app")
+              const appOctokit = new Octokit({
                 authStrategy: createAppAuth,
                 auth: {
                   appId: process.env.DISPATCHER_APP_ID,
                   privateKey: process.env.DISPATCHER_APP_PRIVATE_KEY,
-                  installationId: installation.id
-                }
+                },
               })
-              const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation();
-              repositories.forEach((repository, j) => {
-                await installationOctokit.rest.actions.createWorkflowDispatch({
-                  owner: repository.owner.login,
-                  repo: repository.name,
-                  workflow_id: "externally-triggered.yml",
-                  ref: 'main',
-                  inputs: {
-                    name: ${{ github.event.inputs.name }}
+              const installations = await appOctokit.rest.apps.listInstallations()
+              installations.forEach((installation, i) => {
+                const installationOctokit = new Octokit({
+                  authStrategy: createAppAuth,
+                  auth: {
+                    appId: process.env.DISPATCHER_APP_ID,
+                    privateKey: process.env.DISPATCHER_APP_PRIVATE_KEY,
+                    installationId: installation.id
                   }
                 })
+                const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation();
+                repositories.forEach((repository, j) => {
+                  await installationOctokit.rest.actions.createWorkflowDispatch({
+                    owner: repository.owner.login,
+                    repo: repository.name,
+                    workflow_id: "externally-triggered.yml",
+                    ref: 'main',
+                    inputs: {
+                      name: ${{ github.event.inputs.name }}
+                    }
+                  })
+                })
               })
-            })
+            })()
