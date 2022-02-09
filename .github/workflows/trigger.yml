@@ -42,7 +42,8 @@ jobs:
                   installationId: installation.id
                 }
               })
-              const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation().data
+              const repositories = await installationOctokit.rest.apps.listReposAccessibleToInstallation()
+              console.log(repositories)
               repositories.forEach(async (repository, j) => {
                 await installationOctokit.rest.actions.createWorkflowDispatch({
                   owner: repository.owner.login,
