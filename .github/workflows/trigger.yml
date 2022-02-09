@@ -56,7 +56,7 @@ jobs:
                   workflow_id: "externally-triggered.yml",
                   ref: 'main',
                   inputs: {
-                    name: ${{ github.event.inputs.name }}
+                    name: "${{ github.event.inputs.name }}"
                   }
                 })
               })
