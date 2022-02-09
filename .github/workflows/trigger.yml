@@ -33,6 +33,7 @@ jobs:
               },
             })
             const installations = await appOctokit.rest.apps.listInstallations()
+            console.log(installations)
             installations.forEach(async (installation, i) => {
               const installationOctokit = new Octokit({
                 authStrategy: createAppAuth,
